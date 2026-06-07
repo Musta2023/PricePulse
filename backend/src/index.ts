@@ -30,10 +30,8 @@ app.get('/health', async (req, res) => {
 });
 
 //start
-if (require.main === module) {
-    app.listen(PORT, () => {
-        console.log(`server running on http://localhost:${PORT}`);
-    });
-}
+app.listen(PORT, () => {
+    console.log(`server running on http://localhost:${PORT}`);
+});
 
 export { app };

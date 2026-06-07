@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
-import { Activity, AlertCircle, Info, ChevronLeft, ChevronRight, RefreshCw, LogOut, User } from 'lucide-react';
+import { Activity, AlertCircle, Info, ChevronLeft, ChevronRight, RefreshCw, LogOut } from 'lucide-react';
 import { useProduct, useCreateProduct, useDeleteProduct } from './hooks/useProducts';
 import ProductForm from './components/productForm';
 import ProductList from './components/productList';

@@ -9,6 +9,7 @@ RUN npm install
 COPY . .
 RUN npx prisma generate
 RUN npm run build
+RUN sed -i 's/\r$//' start.sh && chmod +x start.sh
 
 # Production stage
 FROM node:20-alpine
@@ -19,10 +20,9 @@ COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/prisma.config.ts ./
 COPY --from=builder /app/start.sh ./start.sh
-
-RUN chmod +x ./start.sh
 
 EXPOSE 3000
 
-CMD ["./start.sh"]
+CMD ["sh", "./start.sh"]

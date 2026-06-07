@@ -24,7 +24,7 @@ services:
     container_name: pricepulse-backend
     restart: always
     environment:
-      DATABASE_URL: postgresql://postgres:password@db:5433/pricepulse?schema=public
+      DATABASE_URL: postgresql://postgres:password@db:5432/pricepulse?schema=public
       PORT: 3000
     depends_on:
       db:
@@ -37,7 +37,7 @@ services:
     container_name: pricepulse-frontend
     restart: always
     ports:
-      - "8080:80"
+      - "8081:80"
     depends_on:
       - backend
 
