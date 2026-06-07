@@ -1,0 +1,32 @@
+import express from "express";
+import cors from 'cors';
+import helmet from 'helmet';
+import productRoute from './routs/products.routes'
+import './services/priceSimulator.service'
+import prisma from './db/prisma'
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// middleware
+app.use(helmet())
+app.use(cors())
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+
+// routes
+app.use('/api/products', productRoute);
+
+//health check
+app.get('/health', async (req, res) => {
+    try {
+        await prisma.$queryRaw`SELECT 1`;
+        return res.json({ status: 'ok', db: 'connected' });
+    } catch (error) {
+        return res.status(500).json({ status: 'error', details: 'disconnected' });
+    }
+});
+//start
+app.listen(PORT,()=>{
+    console.log(`server running on http://localhost:${PORT}`);
+})
