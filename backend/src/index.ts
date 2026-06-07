@@ -26,7 +26,12 @@ app.get('/health', async (req, res) => {
         return res.status(500).json({ status: 'error', details: 'disconnected' });
     }
 });
+
 //start
-app.listen(PORT,()=>{
-    console.log(`server running on http://localhost:${PORT}`);
-})
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`server running on http://localhost:${PORT}`);
+    });
+}
+
+export { app };

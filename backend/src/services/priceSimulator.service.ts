@@ -1,20 +1,30 @@
 import prisma from "../db/prisma";
 
+/**
+ * Pure function to calculate price variation (±5%)
+ * Extracted for unit testing as per technical challenge requirements.
+ */
+export function calculateNewPrice(currentPrice: number): number {
+    const variation = (Math.random() - 0.5) * 0.1; // ±5%
+    let newPrice = currentPrice * (1 + variation);
+    return Math.round(newPrice * 100) / 100;
+}
+
 async function updatePrice(){
     const  products = await prisma.product.findMany()
     for (const product of products){
-        const variation = (Math.random()-0.5)*0.1
-        let newPrice = product.currentPrice*(1+variation)
-        newPrice=Math.round(newPrice*100)/100
+        const newPrice = calculateNewPrice(product.currentPrice);
         await prisma.product.update({
             where:{id:product.id},
             data:{currentPrice:newPrice, lastUpdate: new Date()},
-            
-            
         })
     }
     console.log(`Price updated at ${new Date().toISOString()}`)
 }
-setInterval(updatePrice,30000);
-updatePrice().catch(console.error);
+
+if (require.main === module) {
+    setInterval(updatePrice, 30000);
+    updatePrice().catch(console.error);
+}
+
 export default updatePrice
