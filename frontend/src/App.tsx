@@ -1,15 +1,40 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
-import { Activity, AlertCircle, Info, ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react';
+import { Activity, AlertCircle, Info, ChevronLeft, ChevronRight, RefreshCw, LogOut, User } from 'lucide-react';
 import { useProduct, useCreateProduct, useDeleteProduct } from './hooks/useProducts';
 import ProductForm from './components/productForm';
 import ProductList from './components/productList';
+import AuthForm from './components/authForm';
 
 function App() {
   const [page, setPage] = useState(1);
-  const { data, isLoading, error, isFetching } = useProduct(page);
+  const [token, setToken] = useState(localStorage.getItem('token'));
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user') || 'null'));
+
+  const { data, isLoading, error, isFetching } = useProduct(token ? page : -1);
   const createProduct = useCreateProduct();
   const deleteProduct = useDeleteProduct();
+
+  const handleAuthSuccess = (newToken: string, newUser: any) => {
+    setToken(newToken);
+    setUser(newUser);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setToken(null);
+    setUser(null);
+  };
+
+  if (!token) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <AuthForm onSuccess={handleAuthSuccess} />
+        <Toaster position="bottom-right" />
+      </div>
+    );
+  }
 
   // Modern Error State
   if (error) {
@@ -53,13 +78,30 @@ function App() {
             </h1>
           </div>
 
-          {/* Real-time Indicator */}
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-xs font-semibold border border-emerald-100">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
-            Live Updates
+          <div className="flex items-center gap-6">
+            {/* Real-time Indicator */}
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-xs font-semibold border border-emerald-100">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+              Live Updates
+            </div>
+
+            {/* User Profile & Logout */}
+            <div className="flex items-center gap-4 border-l border-slate-200 pl-6">
+              <div className="text-right hidden md:block">
+                <p className="text-xs font-bold text-slate-900">{user?.name}</p>
+                <p className="text-[10px] text-slate-500">{user?.email}</p>
+              </div>
+              <button 
+                onClick={handleLogout}
+                className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                title="Logout"
+              >
+                <LogOut className="w-5 h-5" />
+              </button>
+            </div>
           </div>
         </div>
       </header>

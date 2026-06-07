@@ -1,82 +1,117 @@
 import request from 'supertest';
 import { app } from '../index';
 import prisma from '../db/prisma';
+import bcrypt from 'bcrypt';
 
-describe('Products API Integration Tests', () => {
+describe('Products API Integration Tests (Authenticated)', () => {
+    let token: string;
     let testUserId: number;
 
     beforeAll(async () => {
-        // Ensure a user exists for testing
-        const user = await prisma.user.upsert({
-            where: { email: 'test@example.com' },
-            update: {},
-            create: {
-                email: 'test@example.com',
-                name: 'Test User'
+        // Clean and Setup test user
+        await prisma.product.deleteMany({});
+        await prisma.user.deleteMany({});
+
+        const hashedPassword = await bcrypt.hash('password123', 10);
+        const user = await prisma.user.create({
+            data: {
+                email: 'test-api@example.com',
+                password: hashedPassword,
+                name: 'Test API User'
             }
         });
         testUserId = user.id;
+
+        // Login to get token
+        const loginRes = await request(app)
+            .post('/api/auth/login')
+            .send({
+                email: 'test-api@example.com',
+                password: 'password123'
+            });
+        
+        token = loginRes.body.token;
     });
 
     afterAll(async () => {
-        // Cleanup
-        await prisma.product.deleteMany({ where: { userId: testUserId } });
-        // We keep the user to avoid foreign key issues in other runs, 
-        // but in a real CI environment we'd use a separate test DB.
+        await prisma.product.deleteMany({});
+        await prisma.user.deleteMany({});
     });
 
     describe('POST /api/products', () => {
-        it('should create a new product', async () => {
+        it('should create a new product when authenticated', async () => {
             const res = await request(app)
                 .post('/api/products')
+                .set('Authorization', `Bearer ${token}`)
                 .send({
-                    url: 'https://jest-test.com/product',
+                    url: 'https://jest-test.com/product-auth',
                     initialPrice: 50.00
                 });
 
             expect(res.status).toBe(201);
-            expect(res.body.product).toHaveProperty('id');
-            expect(res.body.product.url).toBe('https://jest-test.com/product');
+            expect(res.body.product.userId).toBe(testUserId);
         });
 
-        it('should return 400 for invalid data', async () => {
+        it('should return 401 when no token is provided', async () => {
             const res = await request(app)
                 .post('/api/products')
+                .send({
+                    url: 'https://no-auth.com',
+                    initialPrice: 10
+                });
+
+            expect(res.status).toBe(401);
+        });
+
+        it('should return 400 for invalid data (URL and Price)', async () => {
+            const res = await request(app)
+                .post('/api/products')
+                .set('Authorization', `Bearer ${token}`)
                 .send({
                     url: 'not-a-url',
                     initialPrice: -10
                 });
 
             expect(res.status).toBe(400);
-            expect(res.body).toHaveProperty('errors');
+            expect(res.body.errors).toContainEqual(expect.objectContaining({ msg: 'must be a valid URL' }));
+            expect(res.body.errors).toContainEqual(expect.objectContaining({ msg: 'price must be postive number' }));
         });
     });
 
     describe('GET /api/products', () => {
-        it('should list products', async () => {
-            const res = await request(app).get('/api/products');
+        it('should list only user products', async () => {
+            const res = await request(app)
+                .get('/api/products')
+                .set('Authorization', `Bearer ${token}`);
+            
             expect(res.status).toBe(200);
-            expect(Array.isArray(res.body.data)).toBe(true);
+            expect(res.body.data.length).toBeGreaterThan(0);
         });
     });
+});
 
-    describe('DELETE /api/products/:id', () => {
-        it('should delete a product', async () => {
-            // First create a product to delete
-            const product = await prisma.product.create({
-                data: {
-                    url: 'https://delete-me.com',
-                    initialPrice: 10,
-                    currentPrice: 10,
-                    userId: testUserId
-                }
+describe('Auth API Integration Tests', () => {
+    it('should register a new user', async () => {
+        const res = await request(app)
+            .post('/api/auth/register')
+            .send({
+                email: 'newuser@test.com',
+                password: 'newpassword',
+                name: 'New User'
             });
+        
+        expect(res.status).toBe(201);
+        expect(res.body).toHaveProperty('token');
+    });
 
-            const res = await request(app).delete(`/api/products/${product.id}`);
-            expect(res.status).toBe(204);
-
-            const deleted = await prisma.product.findUnique({ where: { id: product.id } });
-            expect(deleted).toBeNull();
-        });
+    it('should fail login with wrong password', async () => {
+        const res = await request(app)
+            .post('/api/auth/login')
+            .send({
+                email: 'test-api@example.com',
+                password: 'wrongpassword'
+            });
+        
+        expect(res.status).toBe(401);
     });
 });

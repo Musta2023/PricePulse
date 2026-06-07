@@ -2,6 +2,7 @@ import express from "express";
 import cors from 'cors';
 import helmet from 'helmet';
 import productRoute from './routs/products.routes'
+import authRoute from './routs/auth.routes'
 import './services/priceSimulator.service'
 import prisma from './db/prisma'
 
@@ -15,6 +16,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 // routes
+app.use('/api/auth', authRoute);
 app.use('/api/products', productRoute);
 
 //health check

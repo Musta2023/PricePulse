@@ -1,6 +1,7 @@
 import {Request,Response} from 'express' 
 import {body, validationResult} from 'express-validator'
 import prisma from '../db/prisma'
+import { AuthRequest } from '../middleware/auth.middleware'
 
 //validation rules
 export const validateProduct = [
@@ -8,7 +9,7 @@ export const validateProduct = [
     body('initialPrice').isFloat({gt:0}).withMessage('price must be postive number')
 ]
 //post/api/products
-export const createProduct = async (req:Request, res:Response)=>{
+export const createProduct = async (req:AuthRequest, res:Response)=>{
     const errors = validationResult(req);
     if (!errors.isEmpty()){
         return res.status(400).json({errors:errors.array()})
@@ -20,16 +21,18 @@ export const createProduct = async (req:Request, res:Response)=>{
         if (existing){
             return res.status(409).json({error:'product already exist in database'})
         }
-        const defaultUser= await prisma.user.findFirst();
-        if(!defaultUser){
-            return res.status(500).json({error:'no user found please seed database'})
+        
+        const userId = req.userId;
+        if(!userId){
+            return res.status(401).json({error:'unauthorized'})
         }
+
         const product = await prisma.product.create({
             data:{
                 url,
                 initialPrice:initialPrice,
                 currentPrice: initialPrice,
-                userId: defaultUser.id
+                userId: userId
             }
         });
         res.status(201).json({message:'the product created successfully', product})
@@ -41,23 +44,24 @@ export const createProduct = async (req:Request, res:Response)=>{
     }
 }
 //get/api/products
-export const getProduct = async (req:Request, res:Response) => {
+export const getProduct = async (req:AuthRequest, res:Response) => {
     const page=parseInt(req.query.page as string) || 1;
     const limit =parseInt(req.query.limit as string) || 10;
     const skip = (page-1)*limit
     
     try {
-        const defaultUser= await prisma.user.findFirst();
-        if (!defaultUser){
-            return res.status(400).json({error:'there is no user yet'})
+        const userId = req.userId;
+        if (!userId){
+            return res.status(401).json({error:'unauthorized'})
         }
+
         const products = await prisma.product.findMany({
-            where:{userId: defaultUser.id},
+            where:{userId: userId},
             skip,
             take:limit,
             orderBy:{createdAt: 'desc'},
         })
-        const total = await prisma.product.count({where:{userId:defaultUser.id}});
+        const total = await prisma.product.count({where:{userId:userId}});
         res.json({
             data:products,
             pagination:{page, limit, total,pages:Math.ceil(total/limit)}
@@ -68,12 +72,19 @@ export const getProduct = async (req:Request, res:Response) => {
     }   
 }
 //delete/api/products/:id
-export const deteteProduct= async (req:Request, res:Response) => {
+export const deteteProduct= async (req:AuthRequest, res:Response) => {
     const id = parseInt(req.params.id as string);
     if (isNaN(id)){
         return res.status(400).json({error:'invalid product id'})
     }
     try {
+        const userId = req.userId;
+        const product = await prisma.product.findUnique({ where: { id } });
+        
+        if (!product || product.userId !== userId) {
+            return res.status(403).json({ error: 'Forbidden' });
+        }
+
         await prisma.product.delete({where:{id}})
         res.status(204).json({id,message:'this product was deleted successfully'})
     } catch (error) {
