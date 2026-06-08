@@ -1,9 +1,12 @@
+import dotenv from 'dotenv';
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import prisma from '../db/prisma';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'secret';
+dotenv.config();
+
+const JWT_SECRET = process.env.JWT_SECRET;
 
 export const register = async (req: Request, res: Response) => {
     const { email, password, name } = req.body;
@@ -16,6 +19,7 @@ export const register = async (req: Request, res: Response) => {
             data: { email, password: hashedPassword, name }
         });
 
+        if (!JWT_SECRET) throw new Error("JWT_SECRET not defined");
         const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '24h' });
         res.status(201).json({ token, user: { id: user.id, email: user.email, name: user.name } });
     } catch (error) {
@@ -32,6 +36,7 @@ export const login = async (req: Request, res: Response) => {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(401).json({ error: 'Invalid credentials' });
 
+        if (!JWT_SECRET) throw new Error("JWT_SECRET not defined");
         const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '24h' });
         res.json({ token, user: { id: user.id, email: user.email, name: user.name } });
     } catch (error) {

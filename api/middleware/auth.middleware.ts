@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'secret';
+const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_for_dev';
 
 export interface AuthRequest extends Request {
     userId?: number;
@@ -15,6 +15,7 @@ export const protect = (req: AuthRequest, res: Response, next: NextFunction) => 
     }
 
     try {
+        // Here JWT_SECRET is guaranteed to be a string
         const decoded = jwt.verify(token, JWT_SECRET) as { userId: number };
         req.userId = decoded.userId;
         next();
