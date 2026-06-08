@@ -23,7 +23,7 @@ model User {
 
 model Product {
   id           Int      @id @default(autoincrement())
-  url          String   @unique
+  url          String   
   name         String
   initialPrice Float    @map("initial_price")
   currentPrice Float    @map("current_price")

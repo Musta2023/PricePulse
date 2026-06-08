@@ -7,11 +7,12 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-# Copy frontend source
+# Copy root prisma folder and frontend source
+COPY prisma/ ./prisma/
 COPY frontend/ ./frontend/
 
 # Build frontend using root build script
-RUN npm run build
+RUN npm run build:frontend
 
 # Production stage
 FROM nginx:alpine

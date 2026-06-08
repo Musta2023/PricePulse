@@ -29,11 +29,9 @@ app.get('/health', async (req, res) => {
     }
 });
 
-// Start the server only in development mode, export app for production (Vercel)
-if (process.env.NODE_ENV !== 'production') {
-    app.listen(PORT, () => {
-        console.log(`server running on http://localhost:${PORT}`);
-    });
-}
+// Start the server
+app.listen(PORT, () => {
+    console.log(`server running on http://localhost:${PORT}`);
+});
 
 export default app;

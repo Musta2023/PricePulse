@@ -35,7 +35,7 @@ export const createProduct = async (req:AuthRequest, res:Response)=>{
     const {url, initialPrice, name}= req.body;
     try {
         //verify if the product exist or not
-        const existing = await prisma.product.findUnique({where:{url}})
+        const existing = await prisma.product.findFirst({where:{url}})
         if (existing){
             return res.status(409).json({error:'product already exist in database'})
         }
