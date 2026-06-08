@@ -2,8 +2,11 @@
   "name": "pricepulse-monorepo",
   "version": "1.0.0",
   "private": true,
+  "workspaces": [
+    "frontend"
+  ],
   "scripts": {
-    "build": "npx prisma generate && npx tsc && cd frontend && npx vite build",
+    "build": "npx prisma generate && npx tsc && npx vite build frontend --emptyOutDir",
     "start": "node dist/index.js"
   },
   "dependencies": {
