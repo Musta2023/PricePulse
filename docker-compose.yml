@@ -20,7 +20,9 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   backend:
-    build: ./backend
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: pricepulse-backend
     restart: always
     env_file:
