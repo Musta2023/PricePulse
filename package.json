@@ -3,9 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build:backend": "npx prisma generate && npx tsc",
-    "build:frontend": "cd frontend && npx vite build",
-    "build": "npm run build:backend && npm run build:frontend",
+    "build": "npx prisma generate && npx tsc && cd frontend && npx vite build",
     "start": "node dist/index.js"
   },
   "dependencies": {
