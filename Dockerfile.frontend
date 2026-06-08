@@ -3,17 +3,22 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+# Copy root package files
 COPY package*.json ./
 RUN npm install
 
-COPY . .
+# Copy frontend source
+COPY frontend/ ./frontend/
+
+# Build frontend using root build script
 RUN npm run build
 
 # Production stage
 FROM nginx:alpine
 
-COPY --from=builder /app/dist /usr/share/nginx/html
-# Add a simple nginx config to handle SPA routing if needed
+# Copy the dist folder from frontend
+COPY --from=builder /app/frontend/dist /usr/share/nginx/html
+# ... (rest is same)
 RUN echo 'server { \
     listen 80; \
     location / { \

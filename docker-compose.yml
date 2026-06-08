@@ -37,7 +37,9 @@ services:
       - "3010:3000"
 
   frontend:
-    build: ./frontend
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
     container_name: pricepulse-frontend
     restart: always
     ports:
