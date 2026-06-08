@@ -41,10 +41,10 @@ export default function AuthForm({ onSuccess }: Props) {
                     {isLogin ? <LogIn className="w-6 h-6" /> : <UserPlus className="w-6 h-6" />}
                 </div>
                 <h2 className="text-2xl font-bold text-slate-800">
-                    {isLogin ? 'Sign In to PricePulse' : 'Create an Account'}
+                    {isLogin ? 'Connexion à PricePulse' : 'Créer un compte'}
                 </h2>
                 <p className="text-slate-500 text-sm mt-2">
-                    {isLogin ? 'Enter your credentials to access your dashboard' : 'Join us to start tracking product prices'}
+                    {isLogin ? 'Entrez vos identifiants pour accéder à votre tableau de bord' : 'Rejoignez-nous pour commencer à suivre les prix des produits'}
                 </p>
             </div>
 
@@ -54,7 +54,7 @@ export default function AuthForm({ onSuccess }: Props) {
                         <User className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
                         <input
                             type="text"
-                            placeholder="Full Name"
+                            placeholder="Nom complet"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             required
@@ -66,7 +66,7 @@ export default function AuthForm({ onSuccess }: Props) {
                     <Mail className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
                     <input
                         type="email"
-                        placeholder="Email Address"
+                        placeholder="Adresse email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
@@ -77,7 +77,7 @@ export default function AuthForm({ onSuccess }: Props) {
                     <Lock className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
                     <input
                         type="password"
-                        placeholder="Password"
+                        placeholder="Mot de passe"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
@@ -90,7 +90,7 @@ export default function AuthForm({ onSuccess }: Props) {
                     disabled={isLoading}
                     className="w-full bg-indigo-600 text-white py-2.5 rounded-lg font-bold hover:bg-indigo-700 disabled:bg-slate-400 transition shadow-md shadow-indigo-100"
                 >
-                    {isLoading ? 'Processing...' : (isLogin ? 'Sign In' : 'Sign Up')}
+                    {isLoading ? 'Traitement...' : (isLogin ? 'Se connecter' : 'S\'inscrire')}
                 </button>
             </form>
 
@@ -99,7 +99,7 @@ export default function AuthForm({ onSuccess }: Props) {
                     onClick={() => setIsLogin(!isLogin)}
                     className="text-indigo-600 font-semibold hover:underline"
                 >
-                    {isLogin ? "Don't have an account? Sign Up" : "Already have an account? Sign In"}
+                    {isLogin ? "Vous n'avez pas de compte ? S'inscrire" : "Déjà un compte ? Se connecter"}
                 </button>
             </div>
         </div>

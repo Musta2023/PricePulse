@@ -22,8 +22,10 @@ async function updatePrice(){
     console.log(`Price updated at ${new Date().toISOString()}`)
 }
 
-// Start the simulator
+// Start the simulator only if not in test environment
+
 setInterval(updatePrice, 30000);
 updatePrice().catch(console.error);
+
 
 export default updatePrice

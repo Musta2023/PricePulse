@@ -53,7 +53,10 @@ export default function ProductList({ products, onDelete }: Props) {
                 <thead className="bg-slate-50">
                     <tr>
                         <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">
-                            Produit (URL)
+                            Nom de produit
+                        </th>
+                        <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">
+                            URL
                         </th>
                         <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">
                             Prix Initial
@@ -62,7 +65,7 @@ export default function ProductList({ products, onDelete }: Props) {
                             Prix Actuel
                         </th>
                         <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">
-                            Tendance
+                            Tendance %
                         </th>
                         <th scope="col" className="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">
                             Actions
@@ -71,38 +74,32 @@ export default function ProductList({ products, onDelete }: Props) {
                 </thead>
                 <tbody className="bg-white divide-y divide-slate-100">
                     {products.map(p => (
-                        <tr key={p.id} className="hover:bg-slate-50/50 transition-colors group">
-                            {/* URL Column */}
-                            <td className="px-6 py-4 whitespace-nowrap">
+                        <tr key={p.id} className="hover:bg-slate-50/50 transition-colors">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-slate-900">
+                                {p.name}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm">
                                 <a
                                     href={p.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="flex items-center gap-2 text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors max-w-[200px] sm:max-w-xs lg:max-w-md"
+                                    className="flex items-center gap-1 text-indigo-600 hover:text-indigo-800 transition-colors"
                                 >
-                                    <span className="truncate">{p.url.replace(/^https?:\/\/(www\.)?/, '')}</span>
-                                    <ExternalLink size={14} className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    <span className="truncate max-w-[150px]">{p.url.replace(/^https?:\/\/(www\.)?/, '')}</span>
+                                    <ExternalLink size={12} className="shrink-0" />
                                 </a>
                             </td>
-
-                            {/* Initial Price Column */}
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 font-medium">
                                 {p.initialPrice.toFixed(2)} €
                             </td>
-
-                            {/* Current Price Column */}
                             <td className="px-6 py-4 whitespace-nowrap text-sm">
                                 <span className={`font-bold ${p.currentPrice < p.initialPrice ? 'text-emerald-600' : p.currentPrice > p.initialPrice ? 'text-rose-600' : 'text-slate-700'}`}>
                                     {p.currentPrice.toFixed(2)} €
                                 </span>
                             </td>
-
-                            {/* Trend Column */}
                             <td className="px-6 py-4 whitespace-nowrap">
                                 <TrendIndicator current={p.currentPrice} initial={p.initialPrice} />
                             </td>
-
-                            {/* Actions Column */}
                             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <button
                                     onClick={() => onDelete(p.id)}

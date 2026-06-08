@@ -6,13 +6,13 @@ services:
     container_name: pricepulse-db
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
       POSTGRES_DB: pricepulse
     ports:
-      - "5433:5432"
+      - "5434:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d pricepulse"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d pricepulse"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -23,14 +23,16 @@ services:
     build: ./backend
     container_name: pricepulse-backend
     restart: always
+    env_file:
+      - .env
     environment:
-      DATABASE_URL: postgresql://postgres:password@db:5432/pricepulse?schema=public
+      DATABASE_URL: ${DATABASE_URL}
       PORT: 3000
     depends_on:
       db:
         condition: service_healthy
     ports:
-      - "3000:3000"
+      - "3010:3000"
 
   frontend:
     build: ./frontend

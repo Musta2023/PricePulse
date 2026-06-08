@@ -15,6 +15,7 @@ api.interceptors.request.use((config) => {
 export interface Product {
     id:number,
     url:string,
+    name:string,
     initialPrice:number,
     currentPrice:number,
     lastUpdate:string,

@@ -45,7 +45,8 @@ describe('Products API Integration Tests (Authenticated)', () => {
                 .set('Authorization', `Bearer ${token}`)
                 .send({
                     url: 'https://jest-test.com/product-auth',
-                    initialPrice: 50.00
+                    initialPrice: 50.00,
+                    name: 'Test Product'
                 });
 
             expect(res.status).toBe(201);

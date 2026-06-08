@@ -28,7 +28,7 @@ export default function ProductForm({ onSubmit, isLoading }: Props) {
                 </div>
                 <input
                     type="url"
-                    placeholder="URL du produit (ex: https://example.com/item)"
+                    placeholder="URL du produit (ex: https://exemple.com/article)"
                     value={url}
                     onChange={(e) => setUrl(e.target.value)}
                     required

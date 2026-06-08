@@ -71,16 +71,6 @@ npm run test:e2e
 
 ---
 
-## 🔮 Si j'avais eu 2 semaines de plus...
-
-1. **Vrai Scraping :** Intégration de Puppeteer/Playwright pour extraire les prix réels.
-2. **Alertes :** Envoi d'emails (Nodemailer) quand un prix descend sous un seuil.
-3. **Graphiques :** Visualisation de l'historique des prix avec Recharts.
-4. **WebSockets :** Remplacement du polling par Socket.io pour du temps réel pur.
-5. **CI/CD :** Pipeline GitHub Actions pour l'automatisation des tests.
-
----
-
 ## 📬 Documentation API (Postman)
 
 Une collection Postman simplifiée est disponible dans le fichier `PricePulse_Postman_Collection.json`. Voici les routes clés :
@@ -88,3 +78,13 @@ Une collection Postman simplifiée est disponible dans le fichier `PricePulse_Po
 - `POST /api/auth/login` : Obtenir un token.
 - `GET /api/products` : Voir ses produits.
 - `POST /api/products` : Ajouter un produit.
+
+---
+
+## 💡 Si j'avais deux semaines de plus...
+
+- **Authentification avancée :** Ajout de la réinitialisation de mot de passe, de la connexion via réseaux sociaux (OAuth), et d'une gestion plus fine des rôles utilisateurs.
+- **Scraping réel :** Remplacer le simulateur de prix par un véritable service de scraping (ex: Playwright/Puppeteer) pour récupérer les prix réels des sites e-commerce.
+- **Visualisation de données :** Intégration de graphiques (ex: Recharts) pour visualiser l'historique des prix sur une période donnée au lieu de simples indicateurs de tendance.
+- **Notifications :** Système d'alertes par email ou push lorsqu'un prix descend en dessous d'un certain seuil.
+- **CI/CD :** Mise en place d'un pipeline complet (GitHub Actions) pour automatiser les tests et le déploiement sur une plateforme cloud (Vercel/Render).

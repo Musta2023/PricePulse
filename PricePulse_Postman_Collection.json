@@ -17,7 +17,7 @@
 							"raw": "{\n    \"email\": \"test@user.com\",\n    \"password\": \"password123\",\n    \"name\": \"Tester\"\n}",
 							"options": { "raw": { "language": "json" } }
 						},
-						"url": "http://localhost:3000/api/auth/register"
+						"url": "http://localhost:3010/api/auth/register"
 					}
 				},
 				{
@@ -30,7 +30,7 @@
 							"raw": "{\n    \"email\": \"default@user.com\",\n    \"password\": \"password123\"\n}",
 							"options": { "raw": { "language": "json" } }
 						},
-						"url": "http://localhost:3000/api/auth/login"
+						"url": "http://localhost:3010/api/auth/login"
 					}
 				}
 			]
@@ -45,7 +45,7 @@
 						"header": [
 							{ "key": "Authorization", "value": "Bearer {{token}}" }
 						],
-						"url": "http://localhost:3000/api/products"
+						"url": "http://localhost:3010/api/products"
 					}
 				},
 				{
@@ -60,7 +60,7 @@
 							"raw": "{\n    \"url\": \"https://example.com/item\",\n    \"initialPrice\": 99.99\n}",
 							"options": { "raw": { "language": "json" } }
 						},
-						"url": "http://localhost:3000/api/products"
+						"url": "http://localhost:3010/api/products"
 					}
 				}
 			]

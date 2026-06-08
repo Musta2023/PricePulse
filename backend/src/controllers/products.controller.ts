@@ -8,6 +8,24 @@ export const validateProduct = [
     body('url').isURL().withMessage('must be a valid URL'),
     body('initialPrice').isFloat({gt:0}).withMessage('price must be postive number')
 ]
+// Helper to extract a name from URL
+const extractProductName = (url: string): string => {
+    try {
+        const parsedUrl = new URL(url);
+        // Try to get a segment that looks like a product name
+        // E.g., for Amazon: /dp/B00FLYWNYQ/ -> try to use last part or title
+        const segments = parsedUrl.pathname.split('/').filter(Boolean);
+        if (segments.length > 0) {
+            // Take the last part, replace hyphens with spaces, capitalize
+            const candidate = segments[segments.length - 1];
+            return candidate.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        }
+        return parsedUrl.hostname;
+    } catch {
+        return url.substring(0, 50); // Fallback
+    }
+};
+
 //post/api/products
 export const createProduct = async (req:AuthRequest, res:Response)=>{
     const errors = validationResult(req);
@@ -30,6 +48,7 @@ export const createProduct = async (req:AuthRequest, res:Response)=>{
         const product = await prisma.product.create({
             data:{
                 url,
+                name: extractProductName(url),
                 initialPrice:initialPrice,
                 currentPrice: initialPrice,
                 userId: userId
