@@ -6,10 +6,16 @@ import ProductForm from './components/productForm';
 import ProductList from './components/productList';
 import AuthForm from './components/authForm';
 
+interface User {
+  id: number;
+  email: string;
+  name: string;
+}
+
 function App() {
   const [page, setPage] = useState(1);
   const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
-  const [user, setUser] = useState<any>(() => {
+  const [user, setUser] = useState<User | null>(() => {
     try {
       const saved = localStorage.getItem('user');
       return saved ? JSON.parse(saved) : null;
@@ -22,7 +28,7 @@ function App() {
   const createProduct = useCreateProduct();
   const deleteProduct = useDeleteProduct();
 
-  const handleAuthSuccess = (newToken: string, newUser: any) => {
+  const handleAuthSuccess = (newToken: string, newUser: User) => {
     setToken(newToken);
     setUser(newUser);
   };

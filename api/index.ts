@@ -1,8 +1,8 @@
 import express from "express";
 import cors from 'cors';
 import helmet from 'helmet';
-import productRoute from '../backend/src/routs/products.routes'
-import authRoute from '../backend/src/routs/auth.routes'
+import productRoute from '../backend/src/routes/products.routes'
+import authRoute from '../backend/src/routes/auth.routes'
 import '../backend/src/services/priceSimulator.service'
 import prisma from '../backend/src/db/prisma'
 

@@ -1,90 +1,80 @@
-# PricePulse - Tracker de Prix Malin (MVP) 🚀
+# PricePulse - Elite Price Tracker (Vercel & Docker Ready) 🚀
 
-PricePulse est une application web permettant de suivre l'évolution du prix de produits e-commerce. L'application propose un tableau de bord moderne pour visualiser les tendances de prix simulées en temps réel.
-
-Ce projet a été réalisé pour démontrer une maîtrise de l'architecture Full-Stack, de la sécurité JWT, de la containerisation et des tests automatisés.
+PricePulse is a professional-grade web application designed to track and visualize price fluctuations for e-commerce products in real-time. It features a modern dashboard, secure JWT authentication, and a simulated price engine for live demonstrations.
 
 ---
 
-## 🛠️ Stack Technique
+## 🏗️ Project Architecture
 
-- **Frontend :** React 19, TypeScript, Vite, Tailwind CSS, TanStack Query, Lucide React.
-- **Backend :** Node.js, Express, TypeScript, Prisma ORM.
-- **Base de données :** PostgreSQL.
-- **Sécurité :** JWT (JSON Web Tokens), Bcrypt (hachage).
-- **Tests :** Jest (Unitaires & Intégration), Playwright (E2E).
-- **Infrastructure :** Docker, Docker Compose, Nginx.
+This project follows a modern **Split Monorepo** architecture, optimized for both local development and high-performance cloud deployment.
+
+- **`/frontend`**: React 19 application powered by **Vite**, **Tailwind CSS**, and **TanStack Query**.
+- **`/backend`**: Node.js & Express API with **TypeScript** and **Prisma ORM**.
+- **`/api`**: Vercel-specific serverless entry point for production deployment.
+- **`/prisma`**: Unified database schema managed by Prisma.
 
 ---
 
-## 🚀 Lancement Rapide (Docker)
+## 🛠️ Technical Stack
 
-Le projet est entièrement containerisé. Lancez tout l'écosystème avec :
+- **Frontend:** React 19, TypeScript, Vite, Tailwind CSS, Lucide React, React Hot Toast.
+- **Backend:** Node.js, Express, TypeScript, Prisma ORM.
+- **Database:** PostgreSQL (Compatible with Docker & Cloud providers like Supabase/Neon).
+- **Security:** JWT (JSON Web Tokens) with 24h expiration, Bcrypt password hashing, Helmet.js for header security.
+- **DevOps:** Docker & Docker Compose (Containerization), Nginx (Reverse Proxy), Vercel (Production Hosting).
+
+---
+
+## 🚀 Deployment Guide (Vercel)
+
+PricePulse is pre-configured for **Vercel** deployment with zero-config for the API and static frontend.
+
+1. **Import the repository** into Vercel.
+2. **Environment Variables**: Add `DATABASE_URL` and `JWT_SECRET` in the Vercel Dashboard.
+3. **Build Settings**:
+   - Build Command: `npm run build`
+   - Output Directory: `frontend/dist`
+4. **Deploy**: Vercel will automatically handle the serverless functions in `/api` and serve the frontend.
+
+---
+
+## 🐳 Local Development (Docker)
+
+Launch the entire ecosystem (Frontend, Backend, PostgreSQL) with a single command:
 
 ```bash
 docker-compose up --build
 ```
 
-**Accès aux services :**
-- **Dashboard (Frontend) :** [http://localhost:8081](http://localhost:8081)
-- **API (Backend) :** [http://localhost:3000](http://localhost:3000)
-- **Base de données :** Port `5433` (externe) / `5432` (interne Docker).
-
-**Compte de test (Seed automatique) :**
-- **Email :** `default@user.com`
-- **Mot de passe :** `password123`
+**Access URLs:**
+- **Dashboard:** [http://localhost:8081](http://localhost:8081)
+- **API Health:** [http://localhost:3010/health](http://localhost:3010/health)
 
 ---
 
-## 🧪 Stratégie de Tests
+## 🧪 Quality Assurance
 
-La qualité logicielle est assurée par trois niveaux de tests :
+- **Unit Tests**: Logic verification for price fluctuation algorithms.
+- **Integration Tests**: End-to-end API verification.
+- **E2E Tests**: Full user flow testing using Playwright.
 
-### 1. Tests Unitaires (Back)
-Vérification de la logique pure (calcul des variations de prix).
 ```bash
-cd backend && npm test src/services/__tests__
-```
+# Run backend tests
+cd backend && npm test
 
-### 2. Tests d'Intégration (API)
-Validation des endpoints (Auth, CRUD) et de la communication DB.
-```bash
-cd backend && npm test src/__tests__
-```
-
-### 3. Tests End-to-End (E2E)
-Scénario utilisateur complet (Inscription -> Tracking -> Login).
-```bash
-cd frontend
-npx playwright install chromium
-npm run test:e2e
+# Run frontend E2E
+cd frontend && npm run test:e2e
 ```
 
 ---
 
-## 🏗️ Choix d'Architecture
+## 📬 API Endpoints
 
-- **Sécurité :** Authentification JWT avec isolation des données (chaque utilisateur ne voit que ses produits).
-- **Simulateur :** Worker intégré simulant ±5% de variation toutes les 30s (évite le blocage par anti-scraping).
-- **Data-Fetching :** Polling intelligent avec React Query pour des mises à jour fluides sans rechargement.
-- **DevOps :** Utilisation de builds multi-étapes dans Docker et Nginx comme Reverse Proxy pour gérer les ports proprement.
-
----
-
-## 📬 Documentation API (Postman)
-
-Une collection Postman simplifiée est disponible dans le fichier `PricePulse_Postman_Collection.json`. Voici les routes clés :
-- `POST /api/auth/register` : Créer un compte.
-- `POST /api/auth/login` : Obtenir un token.
-- `GET /api/products` : Voir ses produits.
-- `POST /api/products` : Ajouter un produit.
+- `POST /api/auth/register` : Create new user account.
+- `POST /api/auth/login` : Authenticate and receive JWT.
+- `GET /api/products` : Retrieve user-specific tracked products.
+- `POST /api/products` : Start tracking a new product URL.
 
 ---
 
-## 💡 Si j'avais deux semaines de plus...
-
-- **Authentification avancée :** Ajout de la réinitialisation de mot de passe, de la connexion via réseaux sociaux (OAuth), et d'une gestion plus fine des rôles utilisateurs.
-- **Scraping réel :** Remplacer le simulateur de prix par un véritable service de scraping (ex: Playwright/Puppeteer) pour récupérer les prix réels des sites e-commerce.
-- **Visualisation de données :** Intégration de graphiques (ex: Recharts) pour visualiser l'historique des prix sur une période donnée au lieu de simples indicateurs de tendance.
-- **Notifications :** Système d'alertes par email ou push lorsqu'un prix descend en dessous d'un certain seuil.
-- **CI/CD :** Mise en place d'un pipeline complet (GitHub Actions) pour automatiser les tests et le déploiement sur une plateforme cloud (Vercel/Render).
+*PricePulse was developed to demonstrate mastery of full-stack architecture, secure authentication, and modern deployment pipelines.*
