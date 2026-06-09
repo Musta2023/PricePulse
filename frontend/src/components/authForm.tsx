@@ -28,7 +28,8 @@ export default function AuthForm({ onSuccess }: Props) {
             toast.success(isLogin ? 'Welcome back!' : 'Account created!');
             onSuccess(token, user);
         } catch (error: any) {
-            toast.error(error.response?.data?.error || 'Authentication failed');
+            const message = error.response?.data?.error || error.message || 'Authentication failed';
+            toast.error(message);
         } finally {
             setIsLoading(false);
         }
