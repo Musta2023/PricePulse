@@ -8,8 +8,15 @@ import AuthForm from './components/authForm';
 
 function App() {
   const [page, setPage] = useState(1);
-  const [token, setToken] = useState(localStorage.getItem('token'));
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user') || 'null'));
+  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
+  const [user, setUser] = useState<any>(() => {
+    try {
+      const saved = localStorage.getItem('user');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
 
   const { data, isLoading, error, isFetching } = useProduct(token ? page : -1);
   const createProduct = useCreateProduct();
