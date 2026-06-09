@@ -5,6 +5,8 @@ import { useProduct, useCreateProduct, useDeleteProduct } from './hooks/useProdu
 import ProductForm from './components/productForm';
 import ProductList from './components/productList';
 import AuthForm from './components/authForm';
+import { DashboardStats } from './components/DashboardStats';
+import { PriceAnalyticsChart } from './components/PriceAnalyticsChart';
 
 interface User {
   id: number;
