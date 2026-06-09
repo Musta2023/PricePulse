@@ -1,11 +1,10 @@
 {
-  "name": "pricepulse-monorepo",
+  "name": "pricepulse-root",
   "version": "1.0.0",
   "private": true,
   "scripts": {
     "postinstall": "cd backend && npx prisma generate",
-    "build": "npm install && (cd backend && npm install) && (cd frontend && npm install && npm install tailwindcss autoprefixer postcss recharts && npm run build)",
-    "start": "node backend/dist/index.js"
+    "build": "cd frontend && npm run build"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.8.0",
@@ -17,8 +16,7 @@
     "express-validator": "^7.3.2",
     "helmet": "^8.2.0",
     "jsonwebtoken": "^9.0.3",
-    "pg": "^8.21.0",
-    "recharts": "^2.15.0"
+    "pg": "^8.21.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
