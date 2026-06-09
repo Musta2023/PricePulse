@@ -1,5 +1,6 @@
 import React from 'react';
-import { Package, TrendingDown, BellRing, TrendingUp, LucideIcon } from 'lucide-react';
+import { Package, TrendingDown, BellRing, TrendingUp } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
 interface StatCardProps {
   title: string;
