@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "postinstall": "cd backend && npx prisma generate",
-    "build": "npm install && (cd backend && npm install) && (cd frontend && npm install && npm run build)",
+    "build": "npm install && (cd backend && npm install) && (cd frontend && npm install && npm install tailwindcss autoprefixer postcss && npm run build)",
     "start": "node backend/dist/index.js"
   },
   "dependencies": {
