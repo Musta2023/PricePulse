@@ -65,6 +65,10 @@ function App() {
               <span className="text-xl font-bold text-gray-900">PricePulse</span>
             </div>
             <div className="flex items-center gap-4">
+              <div className="text-right hidden sm:block">
+                <p className="text-sm font-semibold text-gray-900">{user?.name}</p>
+                <p className="text-xs text-gray-500">{user?.email}</p>
+              </div>
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-2 text-gray-600 hover:text-rose-600 transition-colors"
