@@ -7,8 +7,9 @@ export interface AuthRequest extends Request {
     userId?: number;
 }
 
-export const protect = (req: AuthRequest, res: Response, next: NextFunction) => {
-    const token = req.headers.authorization?.split(' ')[1];
+export const protect = (req: Request, res: Response, next: NextFunction) => {
+    const authReq = req as AuthRequest;
+    const token = authReq.headers.authorization?.split(' ')[1];
 
     if (!token) {
         return res.status(401).json({ error: 'Not authorized, no token' });
@@ -16,7 +17,7 @@ export const protect = (req: AuthRequest, res: Response, next: NextFunction) => 
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET) as { userId: number };
-        req.userId = decoded.userId;
+        authReq.userId = decoded.userId;
         next();
     } catch (error) {
         res.status(401).json({ error: 'Not authorized, token failed' });

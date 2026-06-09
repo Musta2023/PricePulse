@@ -27,88 +27,91 @@ const extractProductName = (url: string): string => {
 };
 
 //post/api/products
-export const createProduct = async (req:AuthRequest, res:Response)=>{
-    const errors = validationResult(req);
-    if (!errors.isEmpty()){
-        return res.status(400).json({errors:errors.array()})
+export const createProduct = async (req: AuthRequest, res: Response) => {
+    const authReq = req as any;
+    const errors = validationResult(authReq);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() })
     }
-    const {url, initialPrice}= req.body;
+    const { url, initialPrice } = authReq.body;
     try {
         //verify if the product exist or not
-        const existing = await prisma.product.findUnique({where:{url}})
-        if (existing){
-            return res.status(409).json({error:'product already exist in database'})
+        const existing = await prisma.product.findUnique({ where: { url } })
+        if (existing) {
+            return res.status(409).json({ error: 'product already exist in database' })
         }
-        
-        const userId = req.userId;
-        if(!userId){
-            return res.status(401).json({error:'unauthorized'})
+
+        const userId = authReq.userId;
+        if (!userId) {
+            return res.status(401).json({ error: 'unauthorized' })
         }
 
         const product = await prisma.product.create({
-            data:{
+            data: {
                 url,
                 name: extractProductName(url),
-                initialPrice:initialPrice,
+                initialPrice: initialPrice,
                 currentPrice: initialPrice,
                 userId: userId
             }
         });
-        res.status(201).json({message:'the product created successfully', product})
-        
+        res.status(201).json({ message: 'the product created successfully', product })
+
     } catch (error) {
         console.error(error);
-        res.status(500).json({error:'server error'})
-        
+        res.status(500).json({ error: 'server error' })
+
     }
 }
 //get/api/products
-export const getProduct = async (req:AuthRequest, res:Response) => {
-    const page=parseInt(req.query.page as string) || 1;
-    const limit =parseInt(req.query.limit as string) || 10;
-    const skip = (page-1)*limit
-    
+export const getProduct = async (req: AuthRequest, res: Response) => {
+    const authReq = req as any;
+    const page = parseInt(authReq.query.page as string) || 1;
+    const limit = parseInt(authReq.query.limit as string) || 10;
+    const skip = (page - 1) * limit
+
     try {
-        const userId = req.userId;
-        if (!userId){
-            return res.status(401).json({error:'unauthorized'})
+        const userId = authReq.userId;
+        if (!userId) {
+            return res.status(401).json({ error: 'unauthorized' })
         }
 
         const products = await prisma.product.findMany({
-            where:{userId: userId},
+            where: { userId: userId },
             skip,
-            take:limit,
-            orderBy:{createdAt: 'desc'},
+            take: limit,
+            orderBy: { createdAt: 'desc' },
         })
-        const total = await prisma.product.count({where:{userId:userId}});
+        const total = await prisma.product.count({ where: { userId: userId } });
         res.json({
-            data:products,
-            pagination:{page, limit, total,pages:Math.ceil(total/limit)}
+            data: products,
+            pagination: { page, limit, total, pages: Math.ceil(total / limit) }
         })
     } catch (error) {
-        res.status(500).json({error:'faild to fetch products'})
-        
-    }   
+        res.status(500).json({ error: 'faild to fetch products' })
+
+    }
 }
 //delete/api/products/:id
-export const deteteProduct= async (req:AuthRequest, res:Response) => {
-    const id = parseInt(req.params.id as string);
-    if (isNaN(id)){
-        return res.status(400).json({error:'invalid product id'})
+export const deteteProduct = async (req: AuthRequest, res: Response) => {
+    const authReq = req as any;
+    const id = parseInt(authReq.params.id as string);
+    if (isNaN(id)) {
+        return res.status(400).json({ error: 'invalid product id' })
     }
     try {
-        const userId = req.userId;
+        const userId = authReq.userId;
         const product = await prisma.product.findUnique({ where: { id } });
-        
+
         if (!product || product.userId !== userId) {
             return res.status(403).json({ error: 'Forbidden' });
         }
 
-        await prisma.product.delete({where:{id}})
-        res.status(204).json({id,message:'this product was deleted successfully'})
+        await prisma.product.delete({ where: { id } })
+        res.status(204).json({ id, message: 'this product was deleted successfully' })
     } catch (error) {
         console.error(error)
-        res.status(500).json({error:'failed to delete this product'})
-   
+        res.status(500).json({ error: 'failed to delete this product' })
+
     }
 }
