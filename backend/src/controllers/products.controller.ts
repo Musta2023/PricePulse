@@ -33,7 +33,7 @@ export const createProduct = async (req: AuthRequest, res: Response) => {
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() })
     }
-    const { url, initialPrice } = authReq.body;
+    const { url, initialPrice, name } = authReq.body;
     try {
         //verify if the product exist or not
         const existing = await prisma.product.findUnique({ where: { url } })
@@ -49,7 +49,7 @@ export const createProduct = async (req: AuthRequest, res: Response) => {
         const product = await prisma.product.create({
             data: {
                 url,
-                name: extractProductName(url),
+                name: name || extractProductName(url),
                 initialPrice: initialPrice,
                 currentPrice: initialPrice,
                 userId: userId

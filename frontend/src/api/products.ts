@@ -25,7 +25,7 @@ export interface Product {
 export const getProduct = (page=1, limit = 10)=>{
     return api.get <{data:Product[]; pagination:any}>(`/products?page=${page}&limit=${limit}`);
 }
-export const createProduct= (data:{url:string, initialPrice:number})=>{
+export const createProduct= (data:{url:string, initialPrice:number, name?:string})=>{
    return  api.post<Product>('/products', data)
 }
 export const deleteProduct= (id:number)=>{

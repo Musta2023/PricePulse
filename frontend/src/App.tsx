@@ -69,8 +69,8 @@ function App() {
     );
   }
 
-  const handleAdd = (url: string, initialPrice: number) => {
-    createProduct.mutate({ url, initialPrice });
+  const handleAdd = (url: string, initialPrice: number, name: string) => {
+    createProduct.mutate({ url, initialPrice, name });
   };
 
   const handleDelete = (id: number) => {
