@@ -3,19 +3,12 @@
     "target": "ESNext",
     "module": "CommonJS",
     "moduleResolution": "node",
-    "ignoreDeprecations": "6.0",
-    "outDir": "./dist",
-    "rootDir": "./api",
-    "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "types": ["node", "jest"]
+    "strict": false,
+    "noImplicitAny": false,
+    "allowJs": true,
+    "outDir": "dist"
   },
-  "include": [
-    "api/**/*"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["api/**/*", "backend/src/**/*"]
 }
