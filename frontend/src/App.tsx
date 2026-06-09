@@ -51,7 +51,10 @@ function App() {
           <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
           <h2 className="text-lg font-bold text-slate-800 mb-2">Erreur de connexion</h2>
           <p className="text-slate-600 text-sm">
-            Impossible de charger les produits. Veuillez vérifier que votre backend est bien lancé sur <code className="bg-slate-100 px-1 py-0.5 rounded text-red-600">http://localhost:3000</code>.
+            {error instanceof Error ? error.message : (typeof error === 'string' ? error : 'Une erreur inconnue est survenue.')}
+          </p>
+          <p className="text-slate-500 text-xs mt-4">
+            Veuillez vérifier que votre backend est bien accessible.
           </p>
         </div>
       </div>
