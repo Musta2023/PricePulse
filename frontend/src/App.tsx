@@ -123,18 +123,8 @@ function App() {
       </header>
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
-
-        {/* Info Banner */}
-        <div className="bg-indigo-50/50 border border-indigo-100 rounded-xl p-4 mb-8 flex gap-4 items-start shadow-sm">
-          <Info className="w-5 h-5 text-indigo-600 shrink-0 mt-0.5" />
-          <div>
-            <h3 className="text-sm font-semibold text-indigo-900">Comment fonctionne le suivi</h3>
-            <p className="text-sm text-indigo-700 mt-1 leading-relaxed">
-              Les prix sont simulés et mis à jour automatiquement toutes les 5 secondes (fluctuation de ±5%). <br className="hidden sm:block" />
-              Surveillez les indicateurs <span className="font-semibold text-emerald-600">Verts</span> pour les baisses de prix et <span className="font-semibold text-rose-600">Rouges</span> pour les hausses.
-            </p>
-          </div>
-        </div>
+        <DashboardStats products={products} />
+        <PriceAnalyticsChart products={products} />
 
         {/* Action Section */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8">
