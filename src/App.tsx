@@ -1,15 +1,18 @@
- import { useState } from 'react';
+import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { Activity, AlertCircle, Info, ChevronLeft, ChevronRight, RefreshCw, LogOut } from 'lucide-react';
 import { useProduct, useCreateProduct, useDeleteProduct } from './hooks/useProducts';
 import ProductForm from './components/productForm';
 import ProductList from './components/productList';
 import AuthForm from './components/authForm';
+import ConfirmationModal from './components/ConfirmationModal';
+import DashboardStats from './components/DashboardStats';
 
 function App() {
   const [page, setPage] = useState(1);
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user') || 'null'));
+  const [deleteModal, setDeleteModal] = useState<{isOpen: boolean, productId: number | null}>({isOpen: false, productId: null});
 
   const { data, isLoading, error, isFetching } = useProduct(token ? page : -1);
   const createProduct = useCreateProduct();
@@ -51,13 +54,14 @@ function App() {
     );
   }
 
-  const handleAdd = (url: string, initialPrice: number) => {
-    createProduct.mutate({ url, initialPrice });
+  const handleAdd = (url: string, initialPrice: number, name: string) => {
+    createProduct.mutate({ url, initialPrice, name });
   };
 
-  const handleDelete = (id: number) => {
-    if (window.confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
-      deleteProduct.mutate(id);
+  const confirmDelete = () => {
+    if (deleteModal.productId) {
+      deleteProduct.mutate(deleteModal.productId);
+      setDeleteModal({ isOpen: false, productId: null });
     }
   };
 
@@ -65,38 +69,45 @@ function App() {
   const pagination = data?.pagination;
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans pb-12">
+    <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] font-sans pb-12">
+      <ConfirmationModal 
+        isOpen={deleteModal.isOpen}
+        title="Supprimer le produit"
+        message="Êtes-vous sûr de vouloir supprimer ce produit ? Cette action est irréversible."
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteModal({ isOpen: false, productId: null })}
+      />
       {/* Top Navigation Bar */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="bg-indigo-600 p-2 rounded-lg text-white shadow-sm shadow-indigo-200">
+            <div className="bg-primary p-2 rounded-lg text-white shadow-sm">
               <Activity className="w-5 h-5" />
             </div>
-            <h1 className="text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+            <h1 className="text-lg font-bold text-[#0F172A] tracking-tight">
               PricePulse
             </h1>
           </div>
 
           <div className="flex items-center gap-6">
             {/* Real-time Indicator */}
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-xs font-semibold border border-emerald-100">
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-emerald-50 text-success rounded-full text-xs font-semibold border border-emerald-100">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
               </span>
-              Mises à jour en direct
+               live
             </div>
 
             {/* User Profile & Logout */}
             <div className="flex items-center gap-4 border-l border-slate-200 pl-6">
               <div className="text-right hidden md:block">
-                <p className="text-xs font-bold text-slate-900">{user?.name}</p>
-                <p className="text-[10px] text-slate-500">{user?.email}</p>
+                <p className="text-sm font-semibold text-[#0F172A]">{user?.name}</p>
+                <p className="text-xs text-slate-500">{user?.email}</p>
               </div>
-              <button
+              <button 
                 onClick={handleLogout}
-                className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                className="p-2 text-slate-400 hover:text-danger hover:bg-rose-50 rounded-lg transition-colors"
                 title="Déconnexion"
               >
                 <LogOut className="w-5 h-5" />
@@ -106,22 +117,31 @@ function App() {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+        
+        {/* Page Title & Subtitle */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold text-[#0F172A] tracking-tight">Tableau de bord</h2>
+          <p className="text-slate-500 mt-1 text-xs">Surveillez l'évolution des prix et identifiez rapidement les meilleures opportunités.</p>
+        </div>
+
+        {/* KPI Section */}
+        <DashboardStats products={products} />
 
         {/* Info Banner */}
-        <div className="bg-indigo-50/50 border border-indigo-100 rounded-xl p-4 mb-8 flex gap-4 items-start shadow-sm">
-          <Info className="w-5 h-5 text-indigo-600 shrink-0 mt-0.5" />
+        <div className="bg-indigo-50/50 border border-indigo-100 rounded-lg p-4 mb-8 flex gap-4 items-start shadow-sm">
+          <Info className="w-5 h-5 text-primary shrink-0 mt-0.5" />
           <div>
             <h3 className="text-sm font-semibold text-indigo-900">Comment fonctionne le suivi</h3>
             <p className="text-sm text-indigo-700 mt-1 leading-relaxed">
               Les prix sont simulés et mis à jour automatiquement toutes les 5 secondes (fluctuation de ±5%). <br className="hidden sm:block" />
-              Surveillez les indicateurs <span className="font-semibold text-emerald-600">Verts</span> pour les baisses de prix et <span className="font-semibold text-rose-600">Rouges</span> pour les hausses.
+              Surveillez les indicateurs <span className="font-semibold text-success">Verts</span> pour les baisses de prix et <span className="font-semibold text-danger">Rouges</span> pour les hausses.
             </p>
           </div>
         </div>
 
         {/* Action Section */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8">
+        <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 mb-8">
           <div className="mb-6">
             <h2 className="text-lg font-bold text-slate-800">Ajouter un produit à surveiller</h2>
             <p className="text-sm text-slate-500">Entrez une URL et son prix de départ pour commencer la surveillance.</p>
@@ -130,7 +150,7 @@ function App() {
         </div>
 
         {/* Data List Section */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+        <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden flex flex-col">
           {/* Header of the List */}
           <div className="px-6 py-5 border-b border-slate-200 bg-slate-50/50 flex justify-between items-center">
             <h2 className="text-lg font-bold text-slate-800">Produits suivis</h2>
@@ -160,7 +180,7 @@ function App() {
                 <p className="text-sm">Ajoutez votre premier produit en utilisant le formulaire ci-dessus.</p>
               </div>
             ) : (
-              <ProductList products={products} onDelete={handleDelete} />
+              <ProductList products={products} onDelete={(id) => setDeleteModal({isOpen: true, productId: id})} />
             )}
           </div>
 
@@ -175,7 +195,7 @@ function App() {
                 <button
                   onClick={() => setPage((p: number) => p - 1)}
                   disabled={page === 1}
-                  className="flex items-center gap-1 px-3 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 hover:text-indigo-600 disabled:opacity-50 disabled:hover:bg-white disabled:hover:text-slate-700 transition-all shadow-sm"
+                  className="flex items-center gap-1 px-3 py-2 bg-white border border-slate-200 text-slate-700 rounded-md text-sm font-medium hover:bg-slate-50 hover:text-indigo-600 disabled:opacity-50 disabled:hover:bg-white disabled:hover:text-slate-700 transition-all shadow-sm"
                 >
                   <ChevronLeft className="w-4 h-4" />
                   Précédent
@@ -183,7 +203,7 @@ function App() {
                 <button
                   onClick={() => setPage((p: number) => p + 1)}
                   disabled={page >= pagination.pages}
-                  className="flex items-center gap-1 px-3 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 hover:text-indigo-600 disabled:opacity-50 disabled:hover:bg-white disabled:hover:text-slate-700 transition-all shadow-sm"
+                  className="flex items-center gap-1 px-3 py-2 bg-white border border-slate-200 text-slate-700 rounded-md text-sm font-medium hover:bg-slate-50 hover:text-indigo-600 disabled:opacity-50 disabled:hover:bg-white disabled:hover:text-slate-700 transition-all shadow-sm"
                 >
                   Suivant
                   <ChevronRight className="w-4 h-4" />
@@ -197,7 +217,7 @@ function App() {
       <Toaster
         position="bottom-right"
         toastOptions={{
-          className: 'bg-slate-800 text-white shadow-lg rounded-xl',
+          className: 'border border-slate-200 shadow-xl rounded-xl',
           duration: 3000,
         }}
       />

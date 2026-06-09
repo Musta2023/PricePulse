@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 export const useProduct =(page=1)=>{
     return useQuery({
         queryKey:['products', page],
-        queryFn:async()=>getProduct(page).then((res: { data: any; })=>res.data),
+        queryFn:async()=>getProduct(page).then(res=>res.data),
         refetchInterval:5000, //refresh every 5s
         enabled: page !== -1
     })

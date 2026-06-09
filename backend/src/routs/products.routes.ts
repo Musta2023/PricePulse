@@ -1,4 +1,3 @@
-// @ts-ignore: suppress missing module/type declarations for express
 import {Router} from 'express'
 import { getProduct ,createProduct,deteteProduct, validateProduct} from '../controllers/products.controller'
 import { protect } from '../middleware/auth.middleware';

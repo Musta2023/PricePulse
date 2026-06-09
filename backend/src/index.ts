@@ -29,9 +29,11 @@ app.get('/health', async (req, res) => {
     }
 });
 
-// Start the server
-app.listen(PORT, () => {
-    console.log(`server running on http://localhost:${PORT}`);
-});
+//start
+if (!process.env.VERCEL) {
+    app.listen(PORT, () => {
+        console.log(`server running on http://localhost:${PORT}`);
+    });
+}
 
 export default app;

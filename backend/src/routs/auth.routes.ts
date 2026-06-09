@@ -1,4 +1,3 @@
-// @ts-ignore: allow import even when type declarations are unavailable
 import { Router } from 'express';
 import { register, login } from '../controllers/auth.controller';
 

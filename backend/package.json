@@ -1,17 +1,24 @@
 {
-  "name": "pricepulse-monorepo",
+  "name": "backend",
   "version": "1.0.0",
-  "private": true,
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "postinstall": "cd backend && npx prisma generate",
-    "build": "cd frontend && npm install && npm run build",
-    "start": "node backend/dist/index.js"
+    "dev": "nodemon src/index.ts",
+    "build": "tsc",
+    "test": "jest",
+    "seed": "npx prisma db seed"
   },
+  "prisma": {
+    "seed": "node dist/db/seed.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
   "dependencies": {
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
-    "@tanstack/react-query": "^5.101.0",
-    "axios": "^1.17.0",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
@@ -19,11 +26,7 @@
     "express-validator": "^7.3.2",
     "helmet": "^8.2.0",
     "jsonwebtoken": "^9.0.3",
-    "lucide-react": "^1.17.0",
-    "pg": "^8.21.0",
-    "react": "^19.2.6",
-    "react-dom": "^19.2.6",
-    "react-hot-toast": "^2.6.0"
+    "pg": "^8.21.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",

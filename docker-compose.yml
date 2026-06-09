@@ -20,9 +20,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   backend:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: ./backend
     container_name: pricepulse-backend
     restart: always
     env_file:
@@ -37,9 +35,7 @@ services:
       - "3010:3000"
 
   frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile.frontend
+    build: ./frontend
     container_name: pricepulse-frontend
     restart: always
     ports:

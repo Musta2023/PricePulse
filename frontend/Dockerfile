@@ -3,24 +3,22 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-# Copy root package files and prisma schema
+# Copy package files
 COPY package*.json ./
-COPY prisma/ ./prisma/
-
 RUN npm install
 
 # Copy source files
 COPY . .
 
-# Build frontend using root build script
-RUN npm run build:frontend
+# Build frontend
+RUN npm run build
 
 # Production stage
 FROM nginx:alpine
 
-# Copy the dist folder from build
+# Copy the dist folder from build (Vite builds to dist by default)
 COPY --from=builder /app/dist /usr/share/nginx/html
-# ... (rest is same)
+
 RUN echo 'server { \
     listen 80; \
     location / { \
